@@ -6,13 +6,19 @@
 # Designed to be run on a single .pileup file.
 
 import csv
+import os.path
 
-path = "/Users/MacProMatt/Desktop/pileup_data/pileup/S2_r1_flu.mpileup"  # Switch file path here
+path = "/Users/MacProMatt/Desktop/mpileup.shen/Sample5-2-.rmdup.bam.mpileup"  # Switch file path here
+name_of_file = 'Sample5-2.csv' # Change output file name here
 
 print("Variation data for the file: " + path)
 file_to_parse = open(path, 'r')
 
-with open('S2_r1_flu.csv', 'w') as write_file:  # Change output file name here
+save_location = '/Users/MacProMatt/Desktop/mpileup.shen/csv'
+
+file = os.path.join(save_location, name_of_file)
+
+with open(file, 'w') as write_file:
     file_writer = csv.writer(write_file, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
     cm1, cna, cnp, cns1, cpa, cpb1, cpb2, cnep, cm2 = (1, 1, 1, 1, 1, 1, 1, 1, 1)
     file_writer.writerow(['chr', 'pos', 'con', 'cov', 'SNPs', 'indels'])
