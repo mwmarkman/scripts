@@ -8,8 +8,8 @@
 import csv
 import os.path
 
-path = "/Users/MacProMatt/Desktop/mpileup.shen/Sample5-2-.rmdup.bam.mpileup"  # Switch file path here
-name_of_file = 'Sample5-2.csv' # Change output file name here
+path = "/Users/MacProMatt/Desktop/mpileup.shen/Sample6-1-.rmdup.bam.mpileup"  # Switch file path here
+name_of_file = 'Sample6-1.csv'  # Change output file name here
 
 print("Variation data for the file: " + path)
 file_to_parse = open(path, 'r')
@@ -18,104 +18,38 @@ save_location = '/Users/MacProMatt/Desktop/mpileup.shen/csv'
 
 file = os.path.join(save_location, name_of_file)
 
+
 with open(file, 'w') as write_file:
+    chrom_count = {'M1': 0, 'NA': 0, 'NP': 0, 'NS1': 0, 'PA': 0, 'PB1': 0, 'PB2': 0, 'NEP': 0, 'M2': 0}
     file_writer = csv.writer(write_file, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-    cm1, cna, cnp, cns1, cpa, cpb1, cpb2, cnep, cm2 = (1, 1, 1, 1, 1, 1, 1, 1, 1)
     file_writer.writerow(['chr', 'pos', 'con', 'cov', 'SNPs', 'indels'])
     for line in file_to_parse:
+        f = line.strip().split('\t')
         execute = False
-        chromosome = ''
-        position = -1
-        mod = -1
-        line = line.replace('\t', '@')
-        if line.startswith("M1"):
-            chromosome = "M1"
-            position = cm1
+        chromosome, position, consensus, coverage, aln_type = f[0], f[1], f[2], f[3], f[4]
+        if chromosome in chrom_count:
+            chrom_count[chromosome] += 1
             execute = True
-            cm1 += 1
-        elif line.startswith("NA"):
-            chromosome = "NA"
-            position = cna
-            execute = True
-            cna += 1
-        elif line.startswith("NP"):
-            chromosome = "NP"
-            position = cnp
-            execute = True
-            cnp += 1
-        elif line.startswith("NS1"):
-            chromosome = "NS1"
-            position = cns1
-            execute = True
-            cns1 += 1
-        elif line.startswith("PA"):
-            chromosome = "PA"
-            position = cpa
-            execute = True
-            cpa += 1
-        elif line.startswith("PB1"):
-            chromosome = "PB1"
-            position = cpb1
-            execute = True
-            cpb1 += 1
-        elif line.startswith("PB2"):
-            chromosome = "PB2"
-            position = cpb2
-            execute = True
-            cpb2 += 1
-        elif line.startswith("NEP"):
-            chromosome = "NEP"
-            position = cnep
-            execute = True
-            cnep += 1
-        elif line.startswith("M2"):
-            chromosome = "M2"
-            position = cm2
-            execute = True
-            cm2 += 1
-        elif line.startswith("HA"):
-            pass
-        else:
-            print("****************")
-            print("FAILED TEST CASE")
-            print("****************")
         if execute:
-            line = line.replace((chromosome + '@' + str(position) + "@"), '')
-            consensus = line[0]
-            line = line[2:]
-            coverage = line.split('@')[0]
-            if int(coverage) < 10:
-                line = line[2:]
-            elif int(coverage) < 100:
-                line = line[3:]
-            elif int(coverage) < 1000:
-                line = line[4:]
-            else:
-                print("****************")
-                print("FAILED TEST CASE")
-                print("****************")
-            line = line.split('@')[0]
-            indels1 = line.count('+1') + line.count('-1')
-            indels2 = line.count('+2') + line.count('-2')
-            indels3 = line.count('+3') + line.count('-3')
-            indels4 = line.count('+4') + line.count('-4')
-            indels5 = line.count('+5') + line.count('-5')
-            indels6 = line.count('+6') + line.count('-6')
-            indels7 = line.count('+7') + line.count('-7')
-            indels8 = line.count('+8') + line.count('-8')
-            indels9 = line.count('+9') + line.count('-9')
-            indels10 = line.count('+10') + line.count('-10')
+            snps = aln_type.count('a') + aln_type.count('t') + aln_type.count('c') + aln_type.count(
+                'g') + aln_type.count('A') + aln_type.count(
+                'T') + aln_type.count('C') + aln_type.count('G')
+            indels1 = aln_type.count('+1') + aln_type.count('-1')
+            indels2 = aln_type.count('+2') + aln_type.count('-2')
+            indels3 = aln_type.count('+3') + aln_type.count('-3')
+            indels4 = aln_type.count('+4') + aln_type.count('-4')
+            indels5 = aln_type.count('+5') + aln_type.count('-5')
+            indels6 = aln_type.count('+6') + aln_type.count('-6')
+            indels7 = aln_type.count('+7') + aln_type.count('-7')
+            indels8 = aln_type.count('+8') + aln_type.count('-8')
+            indels9 = aln_type.count('+9') + aln_type.count('-9')
+            indels10 = aln_type.count('+10') + aln_type.count('-10')
             indels = indels1+indels2+indels3+indels4+indels5+indels6+indels7+indels8+indels9+indels10
             indels_weight = indels1+(indels2*2)+(indels3*3)+(indels4*4)+(indels5*5)+(indels6*6)+(indels7*7)+(indels8*8)+(indels9*9)+(indels10*10)
-            snps = line.count('a') + line.count('t') + line.count('c') + line.count('g') + line.count('A') + line.count('T') + line.count('C') + line.count('G')
             snps = snps - indels_weight
             total = snps + indels
             if int(coverage) != 0:
                 mod = total/(int(coverage))
             else:
-                mod = 0
+               mod = 0
             file_writer.writerow([chromosome, position, consensus, coverage, snps, indels, mod])
-            print(line)
-            print(snps)
-            print(indels)
-
