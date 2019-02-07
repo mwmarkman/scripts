@@ -12,7 +12,6 @@ import sys
 path = sys.argv[1]
 save_location = sys.argv[2]
 
-print("Variation data for the file: " + path)
 file_to_parse = open(path, 'r')
 
 with open(save_location, 'w') as write_file:
