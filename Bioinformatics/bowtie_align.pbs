@@ -13,7 +13,7 @@ bowtie2-build mm10_infl.fa FULL_MM_IAV
 mkdir mouse_out
 
 for i in *.fastq; do
-        bowtie2 -local -U $i -L 22 -N 1 -x FULL_MM_IAV -S mouse_out/$i.SAM
+        bowtie2 --local -U $i -L 22 -N 1 -x FULL_MM_IAV -S mouse_out/$i.SAM
 done
 
 cd mouse_out
